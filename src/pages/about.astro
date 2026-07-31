@@ -2,7 +2,12 @@
 import Layout from '../layouts/BlogPost.astro';
 ---
 
-<Layout title="About" description="About Jessica Smith" pubDate={new Date('2026-07-31')}>
+<Layout
+	title="About"
+	description="About Jessica Smith"
+	pubDate={new Date('2026-07-31')}
+	comments={false}
+>
 	<p>
 		I'm a software engineer. This blog is where I write about things I build and things I learn
 		along the way — AI-assisted development, automation, and whatever else sticks.
