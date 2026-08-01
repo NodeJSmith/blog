@@ -61,35 +61,48 @@ list was about the phone-control concept specifically and does not apply to this
 
 ---
 
-# Standalone piece: Building a state machine for AI orchestration that outlives the AI's memory
+# Standalone piece: Instrumenting an AI development pipeline to find out what's load-bearing
 
 The cfl story. Separate from the Claudefiles pipeline piece above — that one covers the
-workflow (grill→define→plan→orchestrate); this one covers the persistence layer underneath
-it and why it needs to exist.
+workflow (grill→define→plan→orchestrate); this one covers the observability layer
+underneath it.
 
-The problem: an AI coding agent working through a multi-task plan loses its entire context
-when it compacts. Without durable state, it either restarts from scratch or guesses where
-it left off. cfl is the fix — a SQLite-backed state machine (5,200 lines) that tracks
-runs, tasks, phases, gates, events, and plan snapshots so the pipeline is resumable across
-any number of context losses.
+The surface-level problem is resumability — an AI coding agent loses its context when it
+compacts, and without durable state it restarts from scratch or guesses where it left off.
+But the deeper problem is that a multi-gate pipeline (design review → code review →
+integration review → readability review) is expensive, and you have no idea which gates
+are catching real issues vs. which are ceremony unless you record the outcomes.
+
+cfl is a SQLite-backed store (5,200 lines) that tracks runs, tasks, phases, gate
+decisions, events, and plan snapshots — not just to make the pipeline resumable, but to
+make it auditable and improvable.
 
 Key beats:
-- Run lifecycle: start → advance phase → complete/stop, with orphan detection for runs
-  that died mid-flight
-- Session tracking with compaction awareness — auto-joins the current session to the
-  active run, records compaction events, so "what happened" is answerable after the
-  agent that did it has forgotten
-- Gate recording — every quality gate decision (reviewer pass/fail, findings, fixes
-  applied) is persisted, not just the final outcome, so you can audit why a task was
-  accepted
-- Plan snapshots — captures the design doc and task files at run start, so drift between
-  the spec and the implementation is detectable even after the files change
-- `cfl run status` as the resumption primitive — an agent waking up after compaction
-  reads it and knows exactly where to pick up, what's done, what's in progress, and
-  what needs intervention
+- Gate recording: every quality gate decision (reviewer pass/fail, specific findings,
+  fixes applied) is persisted, not just the final outcome. This is the data that
+  answers "is the integration reviewer actually catching things the code reviewer
+  misses, or is it rubber-stamping?"
+- Already powering `agent-stats` (gate effectiveness — how often does each reviewer
+  subagent actually block a commit?) and `orchestrate-cost` (cost breakdown by role
+  and model per run) — the kind of questions you can't answer without structured
+  event data
+- Session tracking with compaction awareness — auto-joins sessions to active runs,
+  records compaction events, so "what happened" survives the agent forgetting it did
+  the work
+- Plan snapshots — captures design doc + task files at run start, so spec-vs-implementation
+  drift is detectable even after the files change
+- The resumability angle: `cfl run status` as a primitive — an agent waking up after
+  compaction reads it and knows exactly where to pick up
 - The design choice to make this a standalone CLI + SQLite rather than in-memory state
   inside the orchestrator skill — because the orchestrator's memory is the thing that
   keeps dying
+
+Where it's headed (not yet built, but the data model supports it):
+- Which model produces the best design docs and task files for clean orchestration
+  runs (fewer reviewer rejections, fewer intervention-needed flags)?
+- Does downgrading the orchestrator from Opus to Sonnet result in degraded outcomes,
+  or is the cheaper model indistinguishable in practice?
+- Which gate has the highest false-positive rate and should be relaxed or cut?
 
 ---
 
