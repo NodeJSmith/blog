@@ -61,6 +61,38 @@ list was about the phone-control concept specifically and does not apply to this
 
 ---
 
+# Standalone piece: Building a state machine for AI orchestration that outlives the AI's memory
+
+The cfl story. Separate from the Claudefiles pipeline piece above — that one covers the
+workflow (grill→define→plan→orchestrate); this one covers the persistence layer underneath
+it and why it needs to exist.
+
+The problem: an AI coding agent working through a multi-task plan loses its entire context
+when it compacts. Without durable state, it either restarts from scratch or guesses where
+it left off. cfl is the fix — a SQLite-backed state machine (5,200 lines) that tracks
+runs, tasks, phases, gates, events, and plan snapshots so the pipeline is resumable across
+any number of context losses.
+
+Key beats:
+- Run lifecycle: start → advance phase → complete/stop, with orphan detection for runs
+  that died mid-flight
+- Session tracking with compaction awareness — auto-joins the current session to the
+  active run, records compaction events, so "what happened" is answerable after the
+  agent that did it has forgotten
+- Gate recording — every quality gate decision (reviewer pass/fail, findings, fixes
+  applied) is persisted, not just the final outcome, so you can audit why a task was
+  accepted
+- Plan snapshots — captures the design doc and task files at run start, so drift between
+  the spec and the implementation is detectable even after the files change
+- `cfl run status` as the resumption primitive — an agent waking up after compaction
+  reads it and knows exactly where to pick up, what's done, what's in progress, and
+  what needs intervention
+- The design choice to make this a standalone CLI + SQLite rather than in-memory state
+  inside the orchestrator skill — because the orchestrator's memory is the thing that
+  keeps dying
+
+---
+
 # Standalone piece: Why I built my own dotfiles manager instead of using chezmoi
 
 The dfl architecture piece. Not a "here's my dotfiles" post — those are commodity content.
