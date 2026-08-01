@@ -64,6 +64,6 @@ AI writes better code than I do, and faster than I ever will. It can research a 
 
 The cheapest mechanism I know is a one-page spec before the next feature. Make the decisions in it yourself. What problem does this solve? What triggered it? Should it ship at all? If the spec doesn't survive a five-minute read, the feature shouldn't survive either.
 
-You'll still decide wrong sometimes. I did, and it cost me two days instead of a codebase.
+You'll still decide wrong sometimes. I did. The only difference between a two-day mistake and a compounding one is how fast you catch it.
 
 I'll keep automating everything else. The decisions stay mine.
