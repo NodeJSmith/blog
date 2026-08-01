@@ -1,6 +1,12 @@
+# Next posts — planning notes
+
+Not published. Two separate, unrelated pieces currently planned (not a combined series).
+
+---
+
 # Series: Guardrails for an AI-written codebase (hassette)
 
-Multi-part series using hassette (~/source/hassette) as the case study. Not published — planning notes only.
+Multi-part series using hassette (~/source/hassette) as the case study.
 
 ## Part 1: Guardrails overview
 Why an AI-native codebase needs guardrails at all. Framing piece the rest of the series hangs off of.
@@ -33,13 +39,22 @@ encode the invariant in a check."
 ## Part 6: How do you know your AI-written tests actually catch bugs
 Mutation testing as a guardrail-verification step. Ties to the `mine-mutation-test` tool.
 
-## Notes / not yet sequenced
-- Orchestration workflow — separate piece from this series. NOT the phone-controlled RC
-  orchestrator (that was a wrong assumption on my part, corrected 2026-08-01). This is the actual
-  Claudefiles pipeline: mine-grill (optional, multi-angle pressure-testing of an idea before
-  committing) → mine-define (discovery interview + codebase investigation → design.md) or the
-  slimmer mine-sketch (lightweight design.md + task files, skips full ceremony) → mine-plan (turns
-  the design doc into task files, validates against a traceability checklist) → mine-orchestrate
-  (executes tasks one at a time with an implementer + reviewer subagent loop). The earlier
-  "COVERED" prior-art flag was about the phone-control concept specifically and does not apply
-  here — this pipeline topic hasn't been checked against prior art yet.
+---
+
+# Standalone piece: The Claudefiles pipeline workflow
+
+Fully separate from the hassette series above — not a part of it, not sequenced with it.
+
+NOT the phone-controlled RC orchestrator (that was a wrong assumption on my part, corrected
+2026-08-01, and stays corrected here).
+
+This is the actual Claudefiles pipeline:
+
+- **mine-grill** (optional) — multi-angle pressure-testing of an idea before committing to building it
+- **mine-define** — discovery interview + codebase investigation → design.md. Or the slimmer
+  **mine-sketch** — lightweight design.md + task files, skips full ceremony
+- **mine-plan** — turns the design doc into task files, validates against a traceability checklist
+- **mine-orchestrate** — executes tasks one at a time with an implementer + reviewer subagent loop
+
+Not yet checked against prior art. The earlier "COVERED" prior-art flag from the original mined-ideas
+list was about the phone-control concept specifically and does not apply to this pipeline topic.
