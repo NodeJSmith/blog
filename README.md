@@ -1,6 +1,6 @@
 # jessicasmith.dev
 
-Personal blog, built with [Astro](https://astro.build). Deployed to GitHub Pages via GitHub Actions.
+Personal blog, built with [Astro](https://astro.build) (AstroPaper theme). Deployed to GitHub Pages via GitHub Actions.
 
 ## Commands
 
@@ -13,13 +13,15 @@ Personal blog, built with [Astro](https://astro.build). Deployed to GitHub Pages
 
 ## Writing a post
 
-Add a Markdown file to `src/content/blog/` with frontmatter:
+Add a Markdown file to `src/content/posts/` with frontmatter:
 
 ```yaml
 ---
-title: 'Post title'
-description: 'One-line summary for SEO/RSS.'
-pubDate: 2026-01-01
+title: Post title
+description: One-line summary for SEO/RSS.
+pubDatetime: 2026-01-01T12:00:00Z
+tags:
+  - tag-name
 ---
 ```
 

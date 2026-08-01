@@ -1,24 +1,36 @@
 ---
-import Layout from '../layouts/BlogPost.astro';
+import { getEntry, render } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import Main from "@/components/Main.astro";
+import Footer from "@/components/Footer.astro";
+import config from "@/config";
+
+const about = await getEntry("pages", "about");
+
+if (!about) {
+  throw new Error(
+    "Missing content entry: `about.md` or `about.mdx` in `src/content/pages/`"
+  );
+}
+
+const { Content } = await render(about);
 ---
 
 <Layout
-	title="About"
-	description="About Jessica Smith"
-	pubDate={new Date('2026-07-31')}
-	comments={false}
+  title={`${about.data.title} | ${config.site.title}`}
+  description={about.data.description}
+  ogImage={about.data.ogImage}
+  canonicalURL={about.data.canonicalURL}
 >
-	<p>
-		I'm Jessica, a staff data engineer. I spend most of my day in Python, Databricks, and AWS,
-		and the rest of it building things nobody asked for: a home automation framework, a tool
-		that reverse-engineers a fitness app's private API, a way for Claude Code to remember what
-		we talked about last week.
-	</p>
-	<p>
-		This blog is where I write about the second half. Mostly what happens when AI writes almost
-		all of your code and you have to figure out which decisions you still can't hand off.
-	</p>
-	<p>
-		Say hi on GitHub: <a href="https://github.com/NodeJSmith">NodeJSmith</a>
-	</p>
+  <Header />
+
+  <Breadcrumb />
+
+  <Main pageTitle={about.data.title} class="app-prose">
+    <Content />
+  </Main>
+
+  <Footer />
 </Layout>
