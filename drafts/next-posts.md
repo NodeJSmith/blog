@@ -34,8 +34,12 @@ encode the invariant in a check."
 Mutation testing as a guardrail-verification step. Ties to the `mine-mutation-test` tool.
 
 ## Notes / not yet sequenced
-- Orchestration workflow (phone-controlled RC orchestrator) is a separate piece, not part of this
-  series. Flagged by earlier prior-art research as a COVERED concept (existing published prior art
-  for "control Claude Code from your phone" generally) — lead with what's actually different about
-  this implementation (busy/idle sidecar signal, deterministic-helpers/LLM-only-interprets-NL split)
-  rather than the concept itself.
+- Orchestration workflow — separate piece from this series. NOT the phone-controlled RC
+  orchestrator (that was a wrong assumption on my part, corrected 2026-08-01). This is the actual
+  Claudefiles pipeline: mine-grill (optional, multi-angle pressure-testing of an idea before
+  committing) → mine-define (discovery interview + codebase investigation → design.md) or the
+  slimmer mine-sketch (lightweight design.md + task files, skips full ceremony) → mine-plan (turns
+  the design doc into task files, validates against a traceability checklist) → mine-orchestrate
+  (executes tasks one at a time with an implementer + reviewer subagent loop). The earlier
+  "COVERED" prior-art flag was about the phone-control concept specifically and does not apply
+  here — this pipeline topic hasn't been checked against prior art yet.
