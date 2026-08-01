@@ -21,7 +21,11 @@ const posts = (await getCollection('blog')).sort(
 				width: 960px;
 			}
 			.intro {
-				margin-bottom: 2rem;
+				margin-bottom: 2.5rem;
+			}
+			h2.section-heading {
+				margin: 0 0 1rem 0;
+				font-size: 1.25rem;
 			}
 			ul {
 				display: flex;
@@ -37,17 +41,6 @@ const posts = (await getCollection('blog')).sort(
 			ul li * {
 				text-decoration: none;
 				transition: 0.2s ease;
-			}
-			ul li:first-child {
-				width: 100%;
-				margin-bottom: 1rem;
-				text-align: center;
-			}
-			ul li:first-child img {
-				width: 100%;
-			}
-			ul li:first-child .title {
-				font-size: 2.369rem;
 			}
 			ul li img {
 				margin-bottom: 0.5rem;
@@ -80,12 +73,6 @@ const posts = (await getCollection('blog')).sort(
 					width: 100%;
 					text-align: center;
 				}
-				ul li:first-child {
-					margin-bottom: 0;
-				}
-				ul li:first-child .title {
-					font-size: 1.563em;
-				}
 			}
 		</style>
 	</head>
@@ -96,6 +83,7 @@ const posts = (await getCollection('blog')).sort(
 				Something on this blog may convince you I know what I'm doing. Don't believe it.
 			</p>
 			<section>
+				<h2 class="section-heading">Latest posts</h2>
 				<ul>
 					{
 						posts.map((post) => (
