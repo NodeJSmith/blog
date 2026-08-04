@@ -106,28 +106,58 @@ Where it's headed (not yet built, but the data model supports it):
 
 ---
 
-# Standalone piece: Why I built my own dotfiles manager instead of using chezmoi
+# Standalone piece: "You Don't Need Stow or Chezmoi" (working title, was the chezmoi-comparison framing — retired 2026-08-02)
 
 The dfl architecture piece. Not a "here's my dotfiles" post — those are commodity content.
 The angle is: the existing dotfiles tools didn't fit the actual problem (multi-context
 WSL machines, systemd service management, cross-platform sync), so building from scratch
-was the honest answer — not a vanity project. Brief chezmoi experiment confirmed the
-mismatch; stow/yadm were never tried because the requirements were already beyond
-"symlink my zshrc."
+was the honest answer — not a vanity project. The specific chezmoi anecdote got cut from
+the piece itself (2026-08-02) — too thin/unverified to hang a story on — but survives as
+a one-line name-drop in the thesis paragraph. stow/yadm were never tried because the
+requirements were already beyond "symlink my zshrc."
+
+**Status (2026-08-02): first draft complete.** Went through `/mine-fragments` →
+`/mine-shape`. Both saved in this repo under
+`drafts/you-dont-need-stow-or-chezmoi/` — `article.md` (the shaped draft) and
+`fragments.md` (the raw material it was built from). Real thesis that emerged: "sprawl" (the problem — invisible
+accumulation on a system with no file browsing) resolving into "bespoke software" (the
+fix — build exactly what your constraints demand instead of adopting a general tool).
+Opening leads with the bespoke thesis, grounds it in the actual constraint set (5
+machines, 2 employers, VPS, WSL boundary) rather than the sprawl image, which pays off
+later once the real numbers are in hand (110 loose files in `home/bin`, 505 tracked
+files total, pre-reorg).
 
 Key beats:
 - Context-aware linking that tears down stale config (not just installs — reconciles).
   The failure mode this solves: a personal skill left on a work laptop after switching
   contexts, or a work-specific service running on the personal desktop
-- Why 4 different sync mechanisms exist (WSL↔Windows can't symlink, VPS can't mount,
-  1Password can't run remotely) — each one solves a genuinely different constraint, not
-  scope creep
+- Why 4 different sync mechanisms exist under `dfl sync`: `ssh` and `ahk` (WSL↔Windows
+  can't symlink — and these are two separate mechanisms for that one constraint, not
+  redundant: `ssh.exe` reads its own `.ssh` tree outside WSL, while AHK autostart has a
+  timing problem, firing before WSL is guaranteed up), `vps` (no shared filesystem,
+  pure SSH round-trips to smithfamily), and `secrets` (1Password rendering). Correction
+  (verified 2026-08-02): the 1Password mechanism isn't forced by "can't run remotely" —
+  a VPS service-account token existed 2026-07-28 and worked, then was deliberately
+  revoked 2026-07-31 during a security audit to shrink attack surface. The sharper
+  point: sometimes the separate mechanism isn't a limitation, it's the better choice
+  after the direct path was proven to work and rejected anyway.
 - Systemd service auto-discovery with condition evaluation — "add the unit file, the
   installer figures out where it runs" vs hand-maintaining a per-machine manifest
-- The SIGPIPE and SIGTTIN war stories (a backgrounded health check sat in state T for
-  days because stdin was still attached to the tty)
-- Concrete numbers: 23 subcommands, 601 tests, 52+7 systemd units, 5 machines, 3 work
-  contexts
+- The SIGTTIN story (not SIGPIPE — that never happened): a backgrounded `mise` health
+  check sat in state T for two to three days because stdin was still attached to the
+  tty. Real, but the "little to no involvement from Jessica" framing was a bad
+  inference from terse commit messages — corrected 2026-08-02 from actual memory:
+  Jessica noticed the check wasn't running and asked Claude why; Claude traced the
+  signal chain, they discussed the fix together, Claude wrote it. Human-in-the-loop
+  throughout (notices symptom → asks → AI investigates/explains/implements), not an
+  autonomous find. (Commits `7994d8b`/`13e024c`, 2026-07-20.)
+- Concrete numbers (verified 2026-08-02 against the live repo): 21 subcommands (13
+  top-level — not 23, that count was stale, from before commands got grouped under
+  `claude`/`sync`/`system triage`), 601 tests (confirmed exact), 52+7 systemd units
+  (confirmed, but that split is timer-paired vs. standalone units, not user vs.
+  system — the user/system split is actually 56/3), 5 machines, 3 work contexts
+  (`WHICH_COMP`: PERSONAL/RHYME/ORION — confirmed as a real code construct, not just
+  a description)
 
 Could pair well with the "AI writes all my code" angle since dfl is itself AI-maintained.
 
@@ -171,3 +201,29 @@ Key beats:
   "payment source unavailable" modes
 - The common thread: each external system demands a different testing strategy, and
   picking the wrong one gives you a green CI that lies about whether the thing works
+
+---
+
+# Standalone piece: AI is a magnifier, not a fix
+
+Emerged from a career-reflection conversation (2026-08-01). Not yet researched or checked
+against prior art.
+
+Thesis: AI doesn't add new capability to a developer, it magnifies whatever's already
+there — abilities, patterns, strengths, and weaknesses alike. For most engineers this
+nets negative, because most don't already have the practices (spec discipline, review
+rigor, testing habits) that make magnification a win instead of a faster way to make the
+same mistakes.
+
+Key beats (rough):
+- The people AI helps most are the ones already building well; the people it hurts are
+  the ones for whom "build build build, no brakes" was already the habit — AI just lets
+  them run it at 10x speed
+- Related to, but distinct from, the cass/ccrecall story — that material isn't a
+  separate draft, it's already published in minimized form inside "AI Writes All My
+  Code" (the migration decision, the abandoned-tool moment, the duplicate-row bug).
+  Could be pulled back out and go deeper as its own case study; this magnifier piece
+  is the general thesis it's an instance of, not a duplicate of it
+- Possible personal angle: contrast a modest, human-in-the-loop AI spend against an
+  unstructured, nonstop-agent-loop approach, without needing it to be the same example
+  as the cass piece
